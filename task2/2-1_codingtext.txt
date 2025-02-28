@@ -1,0 +1,16 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(int n, int k) {
+    // 서비스 음료 개수 계산 (10인분마다 1개)
+    int service_drinks = n / 10;
+
+    // 실제 지불해야 하는 음료 개수 (추가 주문한 개수만 계산)
+    int actual_drinks = k - service_drinks;
+
+    // 총 가격 계산 (양꼬치 가격 + 추가 음료 가격)
+    int answer = (n * 12000) + (actual_drinks * 2000);
+    return answer;
+}
