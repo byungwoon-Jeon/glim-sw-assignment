@@ -38,7 +38,7 @@ MFC를 이용한 **사용자 정의 윈도우** 프로그램으로, 사용자가
 glim-sw-assignment/
 └── task1/
     ├── MFCApplication/
-    │   ├── source/                           # 소스 코드 폴더
+    │   ├── MFCApplication/                   # 소스 코드 폴더
     │   │   ├── res/                          # 리소스 파일 폴더
     │   │   │   ├── MFCApplication.ico        # 아이콘 파일
     │   │   │   └── resource.rc2              # 추가 리소스 파일

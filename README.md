@@ -24,7 +24,7 @@
   ```plaintext
   task1/
   ├── MFCApplication/
-  │   ├── source/         # 소스 코드
+  │   ├── MFCApplication/ # 소스 코드
   │   ├── release/        # 최종 실행 파일
   │   └── MFCApplication.exe
   └── README.md
@@ -32,7 +32,7 @@
 
 - **빌드 및 실행 방법**  
   - `release` 폴더 내의 `MFCApplication.exe`를 실행  
-  - Visual Studio를 통해 `source` 폴더의 솔루션 파일 (`.sln`)을 열어 직접 빌드 및 디버깅 가능
+  - Visual Studio를 통해 `MFCApplication` 폴더의 솔루션 파일 (`.sln`)을 열어 직접 빌드 및 디버깅 가능
 
 ### 📝 Task 2: Programmers 문제 풀이
 
