@@ -1,0 +1,17 @@
+# 무시할 대용량 파일들
+*.ipch
+*.pch
+*.obj
+*.pdb
+*.tlog
+*.log
+*.sdf
+*.ilk
+
+# 빌드 폴더 무시
+.vs/
+Debug/
+x64/
+
+# 예외 처리: .exe 파일 포함
+!task1/MFCApplication/Release/*.exe

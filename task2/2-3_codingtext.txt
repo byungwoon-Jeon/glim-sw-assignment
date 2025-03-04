@@ -1,0 +1,52 @@
+#include <algorithm>
+
+int solution(int a, int b, int c, int d) {
+    // 주사위 눈의 빈도를 저장하는 배열 (1~6까지 사용하므로 7칸 생성)
+    int count[7] = {0};
+    
+    // 주어진 4개의 주사위 값의 빈도수 계산
+    count[a]++;
+    count[b]++;
+    count[c]++;
+    count[d]++;
+
+    int max_count = 0;  // 가장 많이 나온 숫자의 빈도
+    int max_value = 0;  // 가장 많이 나온 숫자 값
+    int unique_value = 0; // 하나만 나온 숫자
+    int pair_value = 0;  // 두 개 나온 숫자
+    
+    // 주사위 값 빈도 확인
+    for (int i = 1; i <= 6; i++) {
+        if (count[i] > max_count) {
+            max_count = count[i];
+            max_value = i;
+        }
+    }
+
+    // 점수 계산 로직
+    if (max_count == 4) { 
+        return 1111 * max_value; // 네 개 모두 같은 경우
+    } else if (max_count == 3) {
+        for (int i = 1; i <= 6; i++) {
+            if (count[i] == 1) {
+                unique_value = i;
+                break;
+            }
+        }
+        return (10 * max_value + unique_value) * (10 * max_value + unique_value);
+    } else if (max_count == 2) {
+        int pairs = 0, others = 1;
+        for (int i = 1; i <= 6; i++) {
+            if (count[i] == 2) {
+                if (pairs == 0) pairs = i;
+                else pair_value = i;
+            } else if (count[i] == 1) {
+                others *= i;
+            }
+        }
+        if (pair_value > 0) return (pairs + pair_value) * abs(pairs - pair_value);
+        return others;
+    } else { // 네 개가 모두 다르면 가장 작은 값 반환
+        return std::min({a, b, c, d});
+    }
+}
