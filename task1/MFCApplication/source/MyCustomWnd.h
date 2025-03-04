@@ -3,6 +3,8 @@
 #pragma once
 #include <vector>
 #include <afxwin.h>
+#include <thread>
+#include <atomic>
 
 class MyCustomWnd : public CWnd
 {
@@ -18,6 +20,9 @@ public:
     void MovePointsRandomly();      // 랜덤 이동 기능
     void SetLineThickness(int thickness); // 선 두께 설정
     void UpdateCoordinateDisplay();
+    void StartRandomMoveThread();
+    bool IsMovingRandomly() const { return m_isMovingRandomly; }
+    size_t GetPointCount() const { return m_points.size(); }
 
 protected:
     DECLARE_MESSAGE_MAP()
@@ -27,13 +32,19 @@ protected:
     afx_msg void OnMouseMove(UINT nFlags, CPoint point);
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 
-private:
-    std::vector<CPoint> m_points; // 클릭한 위치 저장
-    bool m_isDragging = false;    // 드래그 중인지 여부
-    int m_dragIndex = -1;         // 드래그 중인 원의 인덱스
 
-    int m_lineThickness = 1; // 추가: 선 두께 멤버 변수
+private:
+    std::vector<CPoint> m_points;
+    bool m_isDragging = false;
+    int m_dragIndex = -1;
+    int m_lineThickness = 1;
 
     void DrawCircle(HDC hdc, const CPoint& point, int radius, COLORREF color);
     void DrawCircumcircle(HDC hdc);
+
+    // 스레드 관련 멤버 변수
+    std::atomic<bool> m_isMovingRandomly{ false };
+    std::thread m_randomMoveThread;
+
+    void RandomMoveWorker(); // 스레드 함수
 };

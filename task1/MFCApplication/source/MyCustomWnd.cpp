@@ -4,6 +4,7 @@
 #include "MyCustomWnd.h"
 #include <cmath>
 #include "resource.h"
+#include <chrono>
 
 MyCustomWnd::MyCustomWnd() {}
 MyCustomWnd::~MyCustomWnd() {}
@@ -137,9 +138,46 @@ void MyCustomWnd::DrawCircumcircle(HDC hdc)
 
 void MyCustomWnd::ResetPoints()
 {
+    m_isMovingRandomly = false; // 스레드 종료 신호
     m_points.clear(); // 모든 점 초기화
-    Invalidate();
+    Invalidate(); // 화면 갱신
     UpdateCoordinateDisplay(); // 좌표 초기화
+}
+
+void MyCustomWnd::StartRandomMoveThread()
+{
+    if (m_isMovingRandomly)
+        return;
+
+    m_isMovingRandomly = true;
+
+    // 새로운 스레드를 생성하여 자동 이동 시작
+    m_randomMoveThread = std::thread(&MyCustomWnd::RandomMoveWorker, this);
+    m_randomMoveThread.detach();
+}
+
+void MyCustomWnd::RandomMoveWorker()
+{
+    int moveCount = 0;
+
+    while (moveCount < 10 && m_isMovingRandomly)
+    {
+        MovePointsRandomly();
+        UpdateCoordinateDisplay();
+        Invalidate();
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        moveCount++;
+    }
+
+    m_isMovingRandomly = false;
+
+    // 메인 UI 스레드에서 버튼을 다시 활성화
+    CWnd* pParent = GetParent();
+    if (pParent)
+    {
+        pParent->GetDlgItem(IDC_BUTTON_RANDOM)->EnableWindow(TRUE);
+    }
 }
 
 void MyCustomWnd::MovePointsRandomly()
@@ -147,7 +185,7 @@ void MyCustomWnd::MovePointsRandomly()
     CRect rect;
     GetClientRect(&rect);
 
-    int margin = 10; // 점이 화면 밖으로 나가지 않도록 여유 공간 설정
+    int margin = 10; // 화면 밖으로 나가지 않도록 여유 공간 설정
 
     for (auto& point : m_points)
     {
@@ -155,8 +193,8 @@ void MyCustomWnd::MovePointsRandomly()
         point.y = margin + rand() % (rect.Height() - 2 * margin);
     }
 
-    UpdateCoordinateDisplay(); // 좌표 표시 업데이트
-    Invalidate(); // 화면 갱신
+    UpdateCoordinateDisplay();
+    Invalidate();
 }
 
 

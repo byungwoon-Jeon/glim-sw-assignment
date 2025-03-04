@@ -32,25 +32,46 @@ END_MESSAGE_MAP()
 // [초기화] 버튼 클릭 이벤트
 void CMFCApplicationDlg::OnBnClickedButtonReset()
 {
-    CWnd* pCustomWnd = GetDlgItem(1234); // MyCustomWnd의 ID
+    CWnd* pCustomWnd = GetDlgItem(1234);
     if (pCustomWnd)
     {
         ((MyCustomWnd*)pCustomWnd)->ResetPoints();
     }
 
-    // 좌표 표시도 초기화
+    // 좌표 표시 초기화
     GetDlgItem(IDC_STATIC_COORD1)->SetWindowText(_T(""));
     GetDlgItem(IDC_STATIC_COORD2)->SetWindowText(_T(""));
     GetDlgItem(IDC_STATIC_COORD3)->SetWindowText(_T(""));
-}
 
+    // 랜덤 이동 버튼 다시 활성화
+    GetDlgItem(IDC_BUTTON_RANDOM)->EnableWindow(TRUE);
+}
 // [랜덤 이동] 버튼 클릭 이벤트
 void CMFCApplicationDlg::OnBnClickedButtonRandom()
 {
     CWnd* pCustomWnd = GetDlgItem(1234);
     if (pCustomWnd)
     {
-        ((MyCustomWnd*)pCustomWnd)->MovePointsRandomly();
+        MyCustomWnd* pMyCustomWnd = (MyCustomWnd*)pCustomWnd;
+
+        // 점의 개수가 3개가 아닌 경우 경고 메시지 출력
+        if (pMyCustomWnd->GetPointCount() < 3)
+        {
+            AfxMessageBox(_T("랜덤 이동을 하려면 세 개의 점이 필요합니다!"));
+            return;
+        }
+
+        // 이미 랜덤 이동 중이라면 중복 실행 방지
+        if (pMyCustomWnd->IsMovingRandomly())
+        {
+            AfxMessageBox(_T("이미 랜덤 이동이 진행 중입니다!"));
+            return;
+        }
+
+        pMyCustomWnd->StartRandomMoveThread();
+
+        // 랜덤 이동 버튼 비활성화
+        GetDlgItem(IDC_BUTTON_RANDOM)->EnableWindow(FALSE);
     }
 }
 
@@ -123,19 +144,19 @@ BOOL CMFCApplicationDlg::OnInitDialog()
     // 좌표 표시 위치 및 폰트 설정
     if (pCoord1)
     {
-        pCoord1->MoveWindow(600, 140, 150, 30);
+        pCoord1->MoveWindow(600, 140, 200, 30);
         pCoord1->SetFont(pFont);
     }
 
     if (pCoord2)
     {
-        pCoord2->MoveWindow(600, 180, 150, 30);
+        pCoord2->MoveWindow(600, 180, 200, 30);
         pCoord2->SetFont(pFont);
     }
 
     if (pCoord3)
     {
-        pCoord3->MoveWindow(600, 220, 150, 30);
+        pCoord3->MoveWindow(600, 220, 200, 30);
         pCoord3->SetFont(pFont);
     }
 
